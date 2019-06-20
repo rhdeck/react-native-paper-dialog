@@ -15,6 +15,8 @@ const DProvider = context.Provider;
 const DialogProvider = ({ children }) => {
   const [isDialog, setIsDialog] = useState(false);
   const [message, setMessage] = useState();
+  const [pre, setPre] = useState();
+  const [post, setPost] = useState();
   const [title, setTitle] = useState();
   const [actions, setActions] = useState([]);
   const [cancelText, setCancelText] = useState("cancel");
@@ -33,7 +35,9 @@ const DialogProvider = ({ children }) => {
     setTitle,
     setActions,
     setCancelText,
-    setIsDialog
+    setIsDialog,
+    setPre,
+    setPost
   });
   useEffect(() => {
     setValue({
@@ -45,7 +49,9 @@ const DialogProvider = ({ children }) => {
       setTitle,
       setActions,
       setCancelText,
-      setIsDialog
+      setIsDialog,
+      setPre,
+      setPost
     });
   }, [cancelText, dismissKey, clearDismiss, isDialog]);
   const ret = [
@@ -54,11 +60,13 @@ const DialogProvider = ({ children }) => {
         {title && <Dialog.Title>{title}</Dialog.Title>}
         <Dialog.Content>
           <Dialog.ScrollArea>
+            {pre && pre}
             {message && (
               <ScrollView style={{ maxHeight: 300 }}>
                 <Markdown>{message}</Markdown>
               </ScrollView>
             )}
+            {post && post}
           </Dialog.ScrollArea>
           <List.Section>
             {actions.map(({ icon, title, key, description }) => (
@@ -95,17 +103,28 @@ const useShowDialog = () => {
     setTitle,
     setActions,
     setCancelText,
-    setIsDialog
+    setIsDialog,
+    setPre,
+    setPost
   } = useContext(context);
   const showDialog = useCallback(
     async (
-      { title, cancelText = "Close", actions = [], message = null },
+      {
+        title,
+        cancelText = "Close",
+        actions = [],
+        message = null,
+        pre = null,
+        post = null
+      },
       callback = null
     ) => {
       setTitle(title);
       setCancelText(cancelText);
       setActions(actions);
       setMessage(message);
+      setPre(pre);
+      setPost(post);
       setIsDialog(true);
       const promise = new Deferred();
       setPromise(promise);
