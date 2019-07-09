@@ -21,6 +21,7 @@ const DialogProvider = ({ children }) => {
   const [actions, setActions] = useState([]);
   const [cancelText, setCancelText] = useState("cancel");
   const [dismissKey, setDismissKey] = useState();
+  const [contentStyle, setContentStyle] = useState({});
   const clearDismiss = useCallback(() => setDismissKey(null), []);
   const dismissDialog = useCallback(key => {
     setDismissKey(key);
@@ -37,7 +38,8 @@ const DialogProvider = ({ children }) => {
     setCancelText,
     setIsDialog,
     setPre,
-    setPost
+    setPost,
+    setContentStyle
   });
   useEffect(() => {
     setValue({
@@ -51,14 +53,15 @@ const DialogProvider = ({ children }) => {
       setCancelText,
       setIsDialog,
       setPre,
-      setPost
+      setPost,
+      setContentStyle
     });
   }, [cancelText, dismissKey, clearDismiss, isDialog]);
   const ret = [
     <Portal>
       <Dialog visible={isDialog} onDismiss={() => setIsDialog(false)}>
         {title && <Dialog.Title>{title}</Dialog.Title>}
-        <Dialog.Content>
+        <Dialog.Content style={contentStyle}>
           <Dialog.ScrollArea>
             {pre && pre}
             {message && (
@@ -105,7 +108,8 @@ const useShowDialog = () => {
     setCancelText,
     setIsDialog,
     setPre,
-    setPost
+    setPost,
+    setContentStyle
   } = useContext(context);
   const showDialog = useCallback(
     async (
@@ -115,7 +119,8 @@ const useShowDialog = () => {
         actions = [],
         message = null,
         pre = null,
-        post = null
+        post = null,
+        contentStyle = {}
       },
       callback = null
     ) => {
@@ -125,10 +130,12 @@ const useShowDialog = () => {
       setMessage(message);
       setPre(pre);
       setPost(post);
+      setContentStyle(contentStyle);
       setIsDialog(true);
       const promise = new Deferred();
       setPromise(promise);
       const outkey = await promise.promise;
+      setContentStyle({});
       if (typeof callback === "function") return f(outkey);
       return outkey;
     },
