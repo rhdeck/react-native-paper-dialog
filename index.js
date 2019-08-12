@@ -58,7 +58,7 @@ const DialogProvider = ({ children }) => {
     });
   }, [cancelText, dismissKey, clearDismiss, isDialog]);
   const ret = [
-    <Portal>
+    <Portal key="dialog-provider-portal">
       <Dialog visible={isDialog} onDismiss={() => setIsDialog(false)}>
         {title && <Dialog.Title>{title}</Dialog.Title>}
         <Dialog.Content style={contentStyle}>
@@ -74,6 +74,7 @@ const DialogProvider = ({ children }) => {
           <List.Section>
             {actions.map(({ icon, title, key, description }) => (
               <List.Item
+                key={`dialog-provider-list-item-${key}`}
                 left={() => icon && <List.Icon icon={icon} />}
                 onPress={() => dismissDialog(key)}
                 title={title}
@@ -87,7 +88,9 @@ const DialogProvider = ({ children }) => {
         </Dialog.Actions>
       </Dialog>
     </Portal>,
-    <DProvider value={value}>{children}</DProvider>
+    <DProvider key="dialog-provider-provider" value={value}>
+      {children}
+    </DProvider>
   ];
   return ret;
 };
