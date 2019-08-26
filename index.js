@@ -22,6 +22,7 @@ const DialogProvider = ({ children }) => {
   const [cancelText, setCancelText] = useState("cancel");
   const [dismissKey, setDismissKey] = useState();
   const [contentStyle, setContentStyle] = useState({});
+  const [scrollViewStyle, setScrollViewStyle] = useState({ maxHeight: 300 });
   const clearDismiss = useCallback(() => setDismissKey(null), []);
   const dismissDialog = useCallback(key => {
     setDismissKey(key);
@@ -39,7 +40,8 @@ const DialogProvider = ({ children }) => {
     setIsDialog,
     setPre,
     setPost,
-    setContentStyle
+    setContentStyle,
+    setScrollViewStyle
   });
   useEffect(() => {
     setValue({
@@ -54,7 +56,8 @@ const DialogProvider = ({ children }) => {
       setIsDialog,
       setPre,
       setPost,
-      setContentStyle
+      setContentStyle,
+      setScrollViewStyle
     });
   }, [cancelText, dismissKey, clearDismiss, isDialog]);
   const ret = [
@@ -65,7 +68,7 @@ const DialogProvider = ({ children }) => {
           <Dialog.ScrollArea>
             {pre && pre}
             {message && (
-              <ScrollView style={{ maxHeight: 300 }}>
+              <ScrollView style={scrollViewStyle}>
                 <Markdown>{message}</Markdown>
               </ScrollView>
             )}
@@ -112,7 +115,8 @@ const useShowDialog = () => {
     setIsDialog,
     setPre,
     setPost,
-    setContentStyle
+    setContentStyle,
+    setScrollViewStyle
   } = useContext(context);
   const showDialog = useCallback(
     async (
@@ -123,7 +127,8 @@ const useShowDialog = () => {
         message = null,
         pre = null,
         post = null,
-        contentStyle = {}
+        contentStyle = {},
+        scrollViewStyle = { maxHeight: 300 }
       },
       callback = null
     ) => {
@@ -134,6 +139,8 @@ const useShowDialog = () => {
       setPre(pre);
       setPost(post);
       setContentStyle(contentStyle);
+      setScrollViewStyle(scrollViewStyle);
+
       setIsDialog(true);
       const promise = new Deferred();
       setPromise(promise);
