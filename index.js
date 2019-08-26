@@ -22,6 +22,7 @@ const DialogProvider = ({ children }) => {
   const [cancelText, setCancelText] = useState("cancel");
   const [dismissKey, setDismissKey] = useState();
   const [contentStyle, setContentStyle] = useState({});
+  const [scrollViewStyle, setScrollViewStyle] = useState({ maxHeight: 300 });
   const clearDismiss = useCallback(() => setDismissKey(null), []);
   const dismissDialog = useCallback(key => {
     setDismissKey(key);
@@ -39,7 +40,8 @@ const DialogProvider = ({ children }) => {
     setIsDialog,
     setPre,
     setPost,
-    setContentStyle
+    setContentStyle,
+    setScrollViewStyle
   });
   useEffect(() => {
     setValue({
@@ -54,18 +56,19 @@ const DialogProvider = ({ children }) => {
       setIsDialog,
       setPre,
       setPost,
-      setContentStyle
+      setContentStyle,
+      setScrollViewStyle
     });
   }, [cancelText, dismissKey, clearDismiss, isDialog]);
   const ret = [
-    <Portal>
+    <Portal key="dialog-provider-portal">
       <Dialog visible={isDialog} onDismiss={() => setIsDialog(false)}>
         {title && <Dialog.Title>{title}</Dialog.Title>}
         <Dialog.Content style={contentStyle}>
           <Dialog.ScrollArea>
             {pre && pre}
             {message && (
-              <ScrollView style={{ maxHeight: 300 }}>
+              <ScrollView style={scrollViewStyle}>
                 <Markdown>{message}</Markdown>
               </ScrollView>
             )}
@@ -74,6 +77,7 @@ const DialogProvider = ({ children }) => {
           <List.Section>
             {actions.map(({ icon, title, key, description }) => (
               <List.Item
+                key={`dialog-provider-list-item-${key}`}
                 left={() => icon && <List.Icon icon={icon} />}
                 onPress={() => dismissDialog(key)}
                 title={title}
@@ -87,7 +91,9 @@ const DialogProvider = ({ children }) => {
         </Dialog.Actions>
       </Dialog>
     </Portal>,
-    <DProvider value={value}>{children}</DProvider>
+    <DProvider key="dialog-provider-provider" value={value}>
+      {children}
+    </DProvider>
   ];
   return ret;
 };
@@ -109,7 +115,8 @@ const useShowDialog = () => {
     setIsDialog,
     setPre,
     setPost,
-    setContentStyle
+    setContentStyle,
+    setScrollViewStyle
   } = useContext(context);
   const showDialog = useCallback(
     async (
@@ -120,7 +127,8 @@ const useShowDialog = () => {
         message = null,
         pre = null,
         post = null,
-        contentStyle = {}
+        contentStyle = {},
+        scrollViewStyle = { maxHeight: 300 }
       },
       callback = null
     ) => {
@@ -131,6 +139,8 @@ const useShowDialog = () => {
       setPre(pre);
       setPost(post);
       setContentStyle(contentStyle);
+      setScrollViewStyle(scrollViewStyle);
+
       setIsDialog(true);
       const promise = new Deferred();
       setPromise(promise);
