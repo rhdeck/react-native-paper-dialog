@@ -10,6 +10,7 @@ import { ScrollView } from "react-native";
 import { Portal, Dialog, List, Button } from "react-native-paper";
 import Markdown from "react-native-markdown-renderer";
 import Deferred from "es6-deferred";
+import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons";
 const context = createContext();
 const DProvider = context.Provider;
 const DialogProvider = ({ children }) => {
@@ -75,15 +76,29 @@ const DialogProvider = ({ children }) => {
             {post && post}
           </Dialog.ScrollArea>
           <List.Section>
-            {actions.map(({ icon, title, key, description }) => (
-              <List.Item
-                key={`dialog-provider-list-item-${key}`}
-                left={() => icon && <List.Icon icon={icon} />}
-                onPress={() => dismissDialog(key)}
-                title={title}
-                description={description}
-              />
-            ))}
+            {actions.map(({ icon, title, key, description, iconFamily }) => {
+              let targetIcon;
+              switch (iconFamily) {
+                case "materialCommunity":
+                  {
+                    targetIcon = props => (
+                      <MaterialCommunityIcon {...props} name={icon} />
+                    );
+                  }
+                  break;
+                default:
+                  targetIcon = icon;
+              }
+              return (
+                <List.Item
+                  key={`dialog-provider-list-item-${key}`}
+                  left={() => icon && <List.Icon icon={targetIcon} />}
+                  onPress={() => dismissDialog(key)}
+                  title={title}
+                  description={description}
+                />
+              );
+            })}
           </List.Section>
         </Dialog.Content>
         <Dialog.Actions>
