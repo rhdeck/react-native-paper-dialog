@@ -76,29 +76,42 @@ const DialogProvider = ({ children }) => {
             {post && post}
           </Dialog.ScrollArea>
           <List.Section>
-            {actions.map(({ icon, title, key, description, iconFamily }) => {
-              let targetIcon;
-              switch (iconFamily) {
-                case "materialCommunity":
-                  {
-                    targetIcon = props => (
-                      <MaterialCommunityIcon {...props} name={icon} />
-                    );
-                  }
-                  break;
-                default:
-                  targetIcon = icon;
+            {actions.map(
+              ({
+                icon,
+                title,
+                key,
+                description,
+                iconFamily,
+                iconProps = {},
+                listItemProps = {}
+              }) => {
+                let targetIcon;
+                switch (iconFamily) {
+                  case "materialCommunity":
+                    {
+                      targetIcon = props => (
+                        <MaterialCommunityIcon {...props} name={icon} />
+                      );
+                    }
+                    break;
+                  default:
+                    targetIcon = icon;
+                }
+                return (
+                  <List.Item
+                    key={`dialog-provider-list-item-${key}`}
+                    left={() =>
+                      icon && <List.Icon icon={targetIcon} {...iconProps} />
+                    }
+                    onPress={() => dismissDialog(key)}
+                    title={title}
+                    description={description}
+                    {...listItemProps}
+                  />
+                );
               }
-              return (
-                <List.Item
-                  key={`dialog-provider-list-item-${key}`}
-                  left={() => icon && <List.Icon icon={targetIcon} />}
-                  onPress={() => dismissDialog(key)}
-                  title={title}
-                  description={description}
-                />
-              );
-            })}
+            )}
           </List.Section>
         </Dialog.Content>
         <Dialog.Actions>
