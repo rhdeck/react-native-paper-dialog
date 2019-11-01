@@ -115,7 +115,11 @@ const DialogProvider = ({ children }) => {
           </List.Section>
         </Dialog.Content>
         <Dialog.Actions>
-          <Button onPress={() => dismissDialog("cancel")}>{cancelText}</Button>
+          {cancelText ? (
+            <Button onPress={() => dismissDialog("cancel")}>
+              {cancelText}
+            </Button>
+          ) : null}
         </Dialog.Actions>
       </Dialog>
     </Portal>,
