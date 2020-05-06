@@ -4,7 +4,7 @@ import React, {
   useState,
   useContext,
   useCallback,
-  Fragment
+  Fragment,
 } from "react";
 import { ScrollView } from "react-native";
 import { Portal, Dialog, List, Button } from "react-native-paper";
@@ -25,7 +25,7 @@ const DialogProvider = ({ children }) => {
   const [contentStyle, setContentStyle] = useState({});
   const [scrollViewStyle, setScrollViewStyle] = useState({ maxHeight: 300 });
   const clearDismiss = useCallback(() => setDismissKey(null), []);
-  const dismissDialog = useCallback(key => {
+  const dismissDialog = useCallback((key) => {
     setDismissKey(key);
     setIsDialog(false);
   }, []);
@@ -42,7 +42,7 @@ const DialogProvider = ({ children }) => {
     setPre,
     setPost,
     setContentStyle,
-    setScrollViewStyle
+    setScrollViewStyle,
   });
   useEffect(() => {
     setValue({
@@ -58,12 +58,12 @@ const DialogProvider = ({ children }) => {
       setPre,
       setPost,
       setContentStyle,
-      setScrollViewStyle
+      setScrollViewStyle,
     });
   }, [cancelText, dismissKey, clearDismiss, isDialog]);
   const ret = [
     <Portal key="dialog-provider-portal">
-      <Dialog visible={isDialog} onDismiss={() => setIsDialog(false)}>
+      <Dialog visible={isDialog} onDismiss={() => dismissDialog("cancel")}>
         {title && <Dialog.Title>{title}</Dialog.Title>}
         <Dialog.Content style={contentStyle}>
           <Dialog.ScrollArea>
@@ -84,13 +84,13 @@ const DialogProvider = ({ children }) => {
                 description,
                 iconFamily,
                 iconProps = {},
-                listItemProps = {}
+                listItemProps = {},
               }) => {
                 let targetIcon;
                 switch (iconFamily) {
                   case "materialCommunity":
                     {
-                      targetIcon = props => (
+                      targetIcon = (props) => (
                         <MaterialCommunityIcon {...props} name={icon} />
                       );
                     }
@@ -125,11 +125,11 @@ const DialogProvider = ({ children }) => {
     </Portal>,
     <DProvider key="dialog-provider-provider" value={value}>
       {children}
-    </DProvider>
+    </DProvider>,
   ];
   return ret;
 };
-const withDialog = C => props => {
+const withDialog = (C) => (props) => {
   return (
     <DialogProvider>
       <C {...props} />
@@ -148,7 +148,7 @@ const useShowDialog = () => {
     setPre,
     setPost,
     setContentStyle,
-    setScrollViewStyle
+    setScrollViewStyle,
   } = useContext(context);
   const showDialog = useCallback(
     async (
@@ -160,7 +160,7 @@ const useShowDialog = () => {
         pre = null,
         post = null,
         contentStyle = {},
-        scrollViewStyle = { maxHeight: 300 }
+        scrollViewStyle = { maxHeight: 300 },
       },
       callback = null
     ) => {
