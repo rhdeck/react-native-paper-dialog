@@ -4,7 +4,7 @@ import React, {
   useState,
   useContext,
   useCallback,
-  Fragment,
+  useMemo,
 } from "react";
 import { ScrollView } from "react-native";
 import { Portal, Dialog, List, Button } from "react-native-paper";
@@ -24,28 +24,14 @@ const DialogProvider = ({ children }) => {
   const [dismissKey, setDismissKey] = useState();
   const [contentStyle, setContentStyle] = useState({});
   const [scrollViewStyle, setScrollViewStyle] = useState({ maxHeight: 300 });
+  const [messageStyle, setMessageStyle] = useState(null);
   const clearDismiss = useCallback(() => setDismissKey(null), []);
   const dismissDialog = useCallback((key) => {
     setDismissKey(key);
     setIsDialog(false);
   }, []);
-  const [value, setValue] = useState({
-    cancelText,
-    dismissKey,
-    clearDismiss,
-    isDialog,
-    setMessage,
-    setTitle,
-    setActions,
-    setCancelText,
-    setIsDialog,
-    setPre,
-    setPost,
-    setContentStyle,
-    setScrollViewStyle,
-  });
-  useEffect(() => {
-    setValue({
+  const value = useMemo(
+    () => ({
       cancelText,
       dismissKey,
       clearDismiss,
@@ -59,8 +45,10 @@ const DialogProvider = ({ children }) => {
       setPost,
       setContentStyle,
       setScrollViewStyle,
-    });
-  }, [cancelText, dismissKey, clearDismiss, isDialog]);
+      setMessageStyle,
+    }),
+    [cancelText, dismissKey, clearDismiss, isDialog]
+  );
   const ret = [
     <Portal key="dialog-provider-portal">
       <Dialog visible={isDialog} onDismiss={() => dismissDialog("cancel")}>
@@ -70,7 +58,7 @@ const DialogProvider = ({ children }) => {
             {pre && pre}
             {message && (
               <ScrollView style={scrollViewStyle}>
-                <Markdown>{message}</Markdown>
+                <Markdown style={{ messageStyle }}>{message}</Markdown>
               </ScrollView>
             )}
             {post && post}
@@ -90,6 +78,7 @@ const DialogProvider = ({ children }) => {
                 switch (iconFamily) {
                   case "materialCommunity":
                     {
+                      // eslint-disable-next-line react/display-name
                       targetIcon = (props) => (
                         <MaterialCommunityIcon {...props} name={icon} />
                       );
@@ -149,6 +138,7 @@ const useShowDialog = () => {
     setPost,
     setContentStyle,
     setScrollViewStyle,
+    setMessageStyle,
   } = useContext(context);
   const showDialog = useCallback(
     async (
@@ -161,6 +151,7 @@ const useShowDialog = () => {
         post = null,
         contentStyle = {},
         scrollViewStyle = { maxHeight: 300 },
+        messageStyle = null,
       },
       callback = null
     ) => {
@@ -172,13 +163,13 @@ const useShowDialog = () => {
       setPost(post);
       setContentStyle(contentStyle);
       setScrollViewStyle(scrollViewStyle);
-
+      setMessageStyle(messageStyle);
       setIsDialog(true);
       const promise = new Deferred();
       setPromise(promise);
       const outkey = await promise.promise;
       setContentStyle({});
-      if (typeof callback === "function") return f(outkey);
+      if (typeof callback === "function") return callback(outkey);
       return outkey;
     },
     []
