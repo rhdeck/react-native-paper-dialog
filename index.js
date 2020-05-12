@@ -51,10 +51,6 @@ const DialogProvider = ({ children }) => {
     }),
     [cancelText, dismissKey, clearDismiss, isDialog]
   );
-  console.log("I will render markdown with style of ", {
-    ...markdown,
-    ...messageStyle,
-  });
   const ret = [
     <Portal key="dialog-provider-portal">
       <Dialog visible={isDialog} onDismiss={() => dismissDialog("cancel")}>
