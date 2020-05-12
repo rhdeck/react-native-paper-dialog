@@ -11,9 +11,11 @@ import { Portal, Dialog, List, Button } from "react-native-paper";
 import Markdown from "react-native-markdown-renderer";
 import Deferred from "es6-deferred";
 import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons";
+import useThemedStyles from "./useThemedStyles";
 const context = createContext();
 const DProvider = context.Provider;
 const DialogProvider = ({ children }) => {
+  const { markdown } = useThemedStyles(makeStyles);
   const [isDialog, setIsDialog] = useState(false);
   const [message, setMessage] = useState();
   const [pre, setPre] = useState();
@@ -49,6 +51,10 @@ const DialogProvider = ({ children }) => {
     }),
     [cancelText, dismissKey, clearDismiss, isDialog]
   );
+  console.log("I will render markdown with style of ", {
+    ...markdown,
+    ...messageStyle,
+  });
   const ret = [
     <Portal key="dialog-provider-portal">
       <Dialog visible={isDialog} onDismiss={() => dismissDialog("cancel")}>
@@ -58,7 +64,9 @@ const DialogProvider = ({ children }) => {
             {pre && pre}
             {message && (
               <ScrollView style={scrollViewStyle}>
-                <Markdown style={{ messageStyle }}>{message}</Markdown>
+                <Markdown style={{ ...markdown, ...messageStyle }}>
+                  {message}
+                </Markdown>
               </ScrollView>
             )}
             {post && post}
@@ -186,3 +194,12 @@ const useShowDialog = () => {
 };
 export default DialogProvider;
 export { useShowDialog, withDialog };
+const makeStyles = (theme, isDark) => {
+  if (!theme)
+    return { markdown: { text: { color: isDark ? "white" : "black" } } };
+  return {
+    markdown: {
+      text: { color: theme.colors.text },
+    },
+  };
+};
