@@ -1,6 +1,6 @@
 {
   "name": "react-native-paper-dialog",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Easy-to-use dialog hook for react-native-paper",
   "main": "index.js",
   "repository": "https://github.com/rhdeck/react-native-paper-dialog",
