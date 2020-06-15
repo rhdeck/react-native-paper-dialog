@@ -18,8 +18,8 @@ const DialogProvider = ({ children }) => {
   const { markdown } = useThemedStyles(makeStyles);
   const [isDialog, setIsDialog] = useState(false);
   const [message, setMessage] = useState();
-  const [pre, setPre] = useState();
-  const [post, setPost] = useState();
+  const [Pre, setPre] = useState();
+  const [Post, setPost] = useState();
   const [title, setTitle] = useState();
   const [actions, setActions] = useState([]);
   const [cancelText, setCancelText] = useState("cancel");
@@ -57,7 +57,12 @@ const DialogProvider = ({ children }) => {
         {title && <Dialog.Title>{title}</Dialog.Title>}
         <Dialog.Content style={contentStyle}>
           <Dialog.ScrollArea>
-            {pre && pre}
+            {Pre &&
+              (typeof Pre === "function" ? (
+                <Pre dismissDialog={dismissDialog} />
+              ) : (
+                Pre
+              ))}
             {message && (
               <ScrollView style={scrollViewStyle}>
                 <Markdown style={{ ...markdown, ...messageStyle }}>
@@ -65,7 +70,12 @@ const DialogProvider = ({ children }) => {
                 </Markdown>
               </ScrollView>
             )}
-            {post && post}
+            {Post &&
+              (typeof Post === "function" ? (
+                <Post dismissDialog={dismissDialog} />
+              ) : (
+                Post
+              ))}
           </Dialog.ScrollArea>
           <List.Section>
             {actions.map(
@@ -159,15 +169,15 @@ const useShowDialog = () => {
       },
       callback = null
     ) => {
-      setTitle(title);
-      setCancelText(cancelText);
-      setActions(actions);
-      setMessage(message);
-      setPre(pre);
-      setPost(post);
-      setContentStyle(contentStyle);
-      setScrollViewStyle(scrollViewStyle);
-      setMessageStyle(messageStyle);
+      setTitle(() => title);
+      setCancelText(() => cancelText);
+      setActions(() => actions);
+      setMessage(() => message);
+      setPre(() => pre);
+      setPost(() => post);
+      setContentStyle(() => contentStyle);
+      setScrollViewStyle(() => scrollViewStyle);
+      setMessageStyle(() => messageStyle);
       setIsDialog(true);
       const promise = new Deferred();
       setPromise(promise);
