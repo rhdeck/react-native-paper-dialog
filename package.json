@@ -1,6 +1,6 @@
 {
   "name": "react-native-paper-dialog",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "description": "Easy-to-use dialog hook for react-native-paper",
   "main": "dist/index.js",
   "types": "dist/types",
