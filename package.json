@@ -2,8 +2,16 @@
   "name": "react-native-paper-dialog",
   "version": "1.7.0",
   "description": "Easy-to-use dialog hook for react-native-paper",
-  "main": "index.js",
-  "repository": "https://github.com/rhdeck/react-native-paper-dialog",
+  "main": "dist/index.js",
+  "types": "dist/types",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rhdeck/react-native-paper-dialog"
+  },
+  "scripts": {
+    "build": "tsc && typedoc",
+    "prepublishOnly": "yarn build"
+  },
   "author": "Ray Deck",
   "license": "MIT",
   "peerDependencies": {
@@ -18,7 +26,11 @@
     "react-native-markdown-renderer": "^3.2.8"
   },
   "devDependencies": {
+    "@types/react": "^16.9.43",
     "eslint": "^7.0.0",
-    "eslint-plugin-react": "^7.19.0"
+    "eslint-plugin-react": "^7.19.0",
+    "install-peers-cli": "^2.2.0",
+    "typedoc": "^0.17.8",
+    "typescript": "^3.9.7"
   }
 }
